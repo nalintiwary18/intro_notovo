@@ -119,8 +119,117 @@ body.is-preloading {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 12px;
+  gap: 14px;
 }
+
+
+/* BLOG PAGE STYLES — matches main app design language */
+.blog-page-container {
+  width: 100%;
+  max-width: 1728px;
+  margin: 0 auto;
+  background-color: var(--section-bg);
+  min-height: 100vh;
+}
+
+.blog-page-hero {
+  position: relative;
+  width: 100%;
+  padding: 140px 60px 60px 60px;
+  background: var(--section-bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.blog-page-title {
+  font-family: var(--primary-font);
+  font-weight: 700;
+  font-size: clamp(40px, 4vw, 70px);
+  color: var(--fg);
+  max-width: 800px;
+  line-height: 1.1;
+  margin-top: 8px;
+}
+
+.blog-page-list {
+  display: flex;
+  flex-direction: column;
+  padding: 80px 60px;
+  gap: 0;
+}
+
+.blog-page-card {
+  padding: 60px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.blog-page-card:first-child {
+  padding-top: 0;
+}
+
+.blog-page-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.blog-page-badge {
+  font-family: var(--secondary-font);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 12px;
+  border-radius: 100px;
+}
+
+.badge-upcoming {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.badge-info {
+  background: var(--surface);
+  color: var(--fg-muted);
+}
+
+.blog-page-version {
+  font-family: var(--secondary-font);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--fg-muted);
+  letter-spacing: 0.04em;
+}
+
+.blog-page-date {
+  font-family: var(--secondary-font);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--fg-dim);
+  margin-left: auto;
+}
+
+.blog-page-card-title {
+  font-family: var(--primary-font);
+  font-weight: 700;
+  font-size: clamp(28px, 3vw, 48px);
+  color: var(--fg);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.blog-page-card-desc {
+  font-family: var(--secondary-font);
+  font-size: clamp(15px, 1.2vw, 18px);
+  font-weight: 400;
+  color: var(--fg-muted);
+  line-height: 1.65;
+  max-width: 760px;
+}
+
 
 /* Row that holds ThemeToggle + Menu button side by side */
 .nav-top-row {
@@ -605,7 +714,7 @@ body.is-preloading {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* Cards start below, clipped by wrapper overflow:hidden. GSAP slides them up. */

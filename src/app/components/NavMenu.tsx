@@ -1,12 +1,15 @@
 "use client";
 
 import { useRef, useState, useCallback, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { executeTransition } from "@/utils/transition";
 
 const NAV_LINKS = [
-  { label: "Home", href: "#hero" },
-  { label: "Features", href: "#features" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", href: "/" },
+  { label: "Features", href: "/#features" },
+  { label: "Blog", href: "/blog" },
+  { label: "Pricing", href: "/#pricing" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 const ArrowSVG = () => (
@@ -27,6 +30,8 @@ const DotsSVG = () => (
 );
 
 export default function NavMenu() {
+  const router = useRouter();
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -77,31 +82,40 @@ export default function NavMenu() {
     else closeMenu();
   };
 
-  // Smooth scroll using Lenis if available, fallback to native
   const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     closeMenu();
     setOpen(false);
 
-    if (window.location.pathname !== '/') {
-      window.location.href = '/' + href;
+    const targetPath = href.split('#')[0] || '/';
+    const targetHash = href.split('#')[1];
+
+    if (pathname === targetPath) {
+      if (targetHash) {
+        const targetEl = document.getElementById(targetHash);
+        if (targetEl) {
+          setTimeout(() => {
+            const lenis = (window as any).__lenis;
+            if (lenis) {
+              lenis.scrollTo(targetEl, { duration: 1.4, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+            } else {
+              targetEl.scrollIntoView({ behavior: "smooth" });
+            }
+          }, 120);
+        }
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
       return;
     }
 
-    const target = document.querySelector(href);
-    if (!target) return;
-
-    // Small delay to let menu close animation start first
+    // Delay slightly to allow menu closing animation to start, then wipe
     setTimeout(() => {
-      // Lenis exposes itself on window if initialised by SmoothScrolling
-      const lenis = (window as unknown as { __lenis?: { scrollTo: (el: Element, opts: object) => void } }).__lenis;
-      if (lenis) {
-        lenis.scrollTo(target, { duration: 1.4, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
-      } else {
-        target.scrollIntoView({ behavior: "smooth" });
-      }
-    }, 120);
-  }, [closeMenu]);
+      // Pass targetPath for navigation and targetHash for post-mount scroll
+      executeTransition(targetPath || "/", router, targetHash);
+    }, 150);
+
+  }, [closeMenu, pathname, router]);
 
   useEffect(() => {
     return () => {

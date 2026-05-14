@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -12,7 +12,10 @@ import Preloader from "./components/Preloader";
 export default function Home() {
   const container = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
-  const [preloaderDone, setPreloaderDone] = useState(false);
+
+  // If we arrived via wipe transition, skip the preloader entirely
+  const arrivedViaWipe = typeof sessionStorage !== "undefined" && sessionStorage.getItem("wipe-navigating") === "1";
+  const [preloaderDone, setPreloaderDone] = useState(arrivedViaWipe);
 
   const handlePreloaderComplete = useCallback(() => {
     setPreloaderDone(true);
@@ -34,6 +37,39 @@ export default function Home() {
       }
     );
   }, []);
+
+  // When arriving via wipe: show hero immediately, then scroll to pending section
+  useEffect(() => {
+    if (!arrivedViaWipe) return;
+    // Clear the flag
+    sessionStorage.removeItem("wipe-navigating");
+
+    // Instantly show hero elements (no preloader)
+    const heroEl = heroRef.current;
+    if (heroEl) {
+      const heroItems = heroEl.querySelectorAll<HTMLElement>(".hero-entrance");
+      heroItems.forEach((el) => { el.style.opacity = "1"; });
+    }
+
+    // Scroll to any pending section hash
+    const pendingHash = sessionStorage.getItem("scroll-to-hash");
+    if (pendingHash) {
+      sessionStorage.removeItem("scroll-to-hash");
+      // Wait for page and Lenis to be ready
+      setTimeout(() => {
+        const targetEl = document.getElementById(pendingHash);
+        if (!targetEl) return;
+        const lenis = (window as any).__lenis;
+        if (lenis) {
+          lenis.scrollTo(targetEl, { duration: 1.4, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+        } else {
+          targetEl.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 400);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   useGSAP(
     () => {
@@ -239,16 +275,16 @@ export default function Home() {
             </div>
             <div className="working-scroll-right">
               <div className="working-slide-image">
-                <Image src="/assets/screenshot.png" alt="Working Preview" width={1000} height={600} className="working-screenshot" />
+                <img src="/assets/screenshot.png" alt="Working Preview" className="working-screenshot" />
               </div>
               <div className="working-slide-image">
-                <Image src="/assets/aidrivensummerization.png" alt="AI-Driven Summaries" width={1000} height={600} className="working-screenshot" />
+                <img src="/assets/aidrivensummerization.png" alt="AI-Driven Summaries" className="working-screenshot" />
               </div>
               <div className="working-slide-image">
-                <Image src="/assets/conceptualinking.png" alt="Contextual Linking" width={1000} height={600} className="working-screenshot" />
+                <img src="/assets/conceptualinking.png" alt="Contextual Linking" className="working-screenshot" />
               </div>
               <div className="working-slide-image">
-                <Image src="/assets/finalrefinement.png" alt="Final Refinement" width={1000} height={600} className="working-screenshot" />
+                <img src="/assets/finalrefinement.png" alt="Final Refinement" className="working-screenshot" />
               </div>
             </div>
           </div>

@@ -25,6 +25,18 @@ const epilogue = Epilogue({
 export const metadata: Metadata = {
   title: "Notovo - Changing how notes are made.",
   description: "From Raw Material to Structured Notes",
+  icons: {
+    icon: [
+      { url: "/favicon/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon/favicon.ico", type: "image/x-icon" },
+    ],
+    apple: [{ url: "/favicon/apple-touch-icon.png", sizes: "180x180" }],
+    shortcut: [
+      { url: "/favicon/favicon.ico" }
+    ],
+  },
+  manifest: "/favicon/site.webmanifest",
 };
 
 export default function RootLayout({
@@ -36,6 +48,19 @@ export default function RootLayout({
     <html lang="en" className={`${josefinSans.variable} ${inter.variable} ${epilogue.variable}`}>
       <body>
         <SmoothScrolling>{children}</SmoothScrolling>
+        <div 
+          id="wipe-block" 
+          style={{
+            position: "fixed",
+            left: 0,
+            width: "100%",
+            height: "100vh",
+            top: "-100vh",
+            backgroundColor: "black",
+            zIndex: 9999,
+            pointerEvents: "none"
+          }}
+        />
       </body>
     </html>
   );

@@ -161,7 +161,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
             ref={curRef}
             style={{
               position: "absolute",
-              top: "14px",
+              top: "0px",
               left: 0,
               width: "2px",
               bottom: "10px",
